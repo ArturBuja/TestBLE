@@ -7,53 +7,46 @@ import {
   Text,
   StyleSheet,
   TouchableOpacity,
+  Button,
 } from 'react-native';
 import {Device} from 'react-native-ble-plx';
 
 type DeviceModalListItemProps = {
   item: ListRenderItemInfo<Device>;
-  connectToPeripheral: (device: Device) => void;
   closeModal: () => void;
 };
 
 type DeviceModalProps = {
   devices: Device[];
   visible: boolean;
-  connectToPeripheral: (device: Device) => void;
   closeModal: () => void;
 };
 
 const DeviceModalListItem: FC<DeviceModalListItemProps> = props => {
-  const {item, connectToPeripheral, closeModal} = props;
+  const {item, closeModal} = props;
 
   const connectAndCloseModal = useCallback(() => {
-    connectToPeripheral(item.item);
     closeModal();
-  }, [closeModal, connectToPeripheral, item.item]);
+  }, [closeModal]);
 
   return (
     <TouchableOpacity
       onPress={connectAndCloseModal}
       style={modalStyle.ctaButton}>
       <Text style={modalStyle.ctaButtonText}>{item.item.name}</Text>
+      <Text style={modalStyle.ctaButtonText}>{item.item.rssi}</Text>
     </TouchableOpacity>
   );
 };
 
 const DeviceModal: FC<DeviceModalProps> = props => {
-  const {devices, visible, connectToPeripheral, closeModal} = props;
+  const {devices, visible, closeModal} = props;
 
   const renderDeviceModalListItem = useCallback(
     (item: ListRenderItemInfo<Device>) => {
-      return (
-        <DeviceModalListItem
-          item={item}
-          connectToPeripheral={connectToPeripheral}
-          closeModal={closeModal}
-        />
-      );
+      return <DeviceModalListItem item={item} closeModal={closeModal} />;
     },
-    [closeModal, connectToPeripheral],
+    [closeModal],
   );
 
   return (
@@ -71,6 +64,7 @@ const DeviceModal: FC<DeviceModalProps> = props => {
           data={devices}
           renderItem={renderDeviceModalListItem}
         />
+        <Button onPress={closeModal} title="Zamknij" />
       </SafeAreaView>
     </Modal>
   );

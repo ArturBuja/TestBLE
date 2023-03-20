@@ -7,19 +7,11 @@ import {
   View,
 } from 'react-native';
 import DeviceModal from './DeviceConnectionModal';
-import PulseIndicator from './PulseIndicator';
 import useBLE from './useBLE';
 
 const App = () => {
-  const {
-    requestPermissions,
-    scanForPeripherals,
-    allDevices,
-    connectToDevice,
-    connectedDevice,
-    heartRate,
-    disconnectFromDevice,
-  } = useBLE();
+  const {scanForPeripherals, requestPermissions, allDevices, heartRate} =
+    useBLE();
   const [isModalVisible, setIsModalVisible] = useState<boolean>(false);
 
   const scanForDevices = () => {
@@ -42,29 +34,17 @@ const App = () => {
   return (
     <SafeAreaView style={styles.container}>
       <View style={styles.heartRateTitleWrapper}>
-        {connectedDevice ? (
-          <>
-            <PulseIndicator />
-            <Text style={styles.heartRateTitleText}>Your Heart Rate Is:</Text>
-            <Text style={styles.heartRateText}>{heartRate} bpm</Text>
-          </>
-        ) : (
-          <Text style={styles.heartRateTitleText}>
-            Please Connect to a Heart Rate Monitor
-          </Text>
-        )}
-      </View>
-      <TouchableOpacity
-        onPress={connectedDevice ? disconnectFromDevice : openModal}
-        style={styles.ctaButton}>
-        <Text style={styles.ctaButtonText}>
-          {connectedDevice ? 'Disconnect' : 'Connect'}
+        <Text style={styles.heartRateTitleText}>
+          Please search for any beacons
         </Text>
+        <Text style={styles.heartRateTitleText}>{heartRate}</Text>
+      </View>
+      <TouchableOpacity onPress={openModal} style={styles.ctaButton}>
+        <Text style={styles.ctaButtonText}>{'Search for beacons'}</Text>
       </TouchableOpacity>
       <DeviceModal
         closeModal={hideModal}
         visible={isModalVisible}
-        connectToPeripheral={connectToDevice}
         devices={allDevices}
       />
     </SafeAreaView>
